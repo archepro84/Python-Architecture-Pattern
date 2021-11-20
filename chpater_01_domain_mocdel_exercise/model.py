@@ -20,12 +20,12 @@ class Batch:
         self._purchased_quantity = qty
         self._allocations: Set[OrderLine] = set()  # _allocations 변수는 OrderLine 데이터 클래스를 참조한다.
 
-    # 할당이 일어날 때마다 self.available_quantity 값을 감소시킨다.
+    
     def allocate(self, line: OrderLine):
         if self.can_allocate(line):
             self._allocations.add(line)
 
-    def deallocate(self, line: OrderLine) -> OrderLine:
+    def deallocate(self, line: OrderLine):
         if line in self._allocations:
             self._allocations.remove(line)
 
@@ -39,3 +39,21 @@ class Batch:
 
     def can_allocate(self, line: OrderLine) -> bool:
         return self.sku == line.sku and self.available_quantity >= line.qty
+
+
+# 테스트 코드의 디버깅을 하기 위한 Main
+if __name__ == '__main__':
+    def make_batch_and_line_fixture(sku, batch_qty, line_qty):
+        return (
+            Batch("batch-001", sku, batch_qty, eta=date.today()),
+            OrderLine("order-123", sku, line_qty),
+        )
+
+
+    def chapter1_test_1():
+        large_batch, small_line = make_batch_and_line_fixture("ELEGANT-LAMP", 20, 2)
+        print(large_batch.can_allocate(small_line))
+        print(large_batch.can_allocate(small_line))
+
+
+    chapter1_test_1()
