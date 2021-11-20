@@ -1,3 +1,4 @@
+# document : https://www.cosmicpython.com/book/chapter_01_domain_model.html
 from __future__ import annotations
 from dataclasses import dataclass
 from datetime import date
@@ -12,15 +13,49 @@ class OrderLine:
     qty: int
 
 
+class OutOfStock(Exception):
+    pass
+
+
+def allocate(line: OrderLine, batches: List[Batch]) -> str:
+    try:
+        batch = next(
+            b for b in sorted(batches) if b.can_allocate(line)
+        )
+        batch.allocate(line)
+        return batch.reference
+    except StopIteration:
+        raise OutOfStock(f"Out of stock for sku {line.sku}")
+
+
 class Batch:
     def __init__(self, ref: str, sku: str, qty: int, eta: Optional[date]):
         self.reference = ref
         self.sku = sku
         self.eta = eta
         self._purchased_quantity = qty
+        # Set을 사용하여 집합 안에 있는 원소는 모두 유일하다.
         self._allocations: Set[OrderLine] = set()  # _allocations 변수는 OrderLine 데이터 클래스를 참조한다.
 
-    
+    # Equal Magic Method
+    def __eq__(self, other):
+        if not isinstance(other, Batch):
+            return False
+        return other.reference == self.reference
+
+    # doc : https://oreil.ly/YUzg5
+    # 객체를 집합에 추가하거나 Dictionary의 Key로 사용할 때 동작을 제어하기 위한 Magic Method
+    def __hash__(self):
+        return hash(self.reference)
+
+    # sorted()를 작동하게 하기 위한 Magic Method
+    def __gt__(self, other):
+        if self.eta is None:
+            return False
+        if other.eta is None:
+            return True
+        return self.eta > other.eta
+
     def allocate(self, line: OrderLine):
         if self.can_allocate(line):
             self._allocations.add(line)
@@ -33,6 +68,7 @@ class Batch:
     def allocated_quantity(self) -> int:
         return sum(line.qty for line in self._allocations)
 
+    # Batch._purchased_quantity - Set에 저장된 모든 OrderLine.qty 값을 뺀 결과값
     @property
     def available_quantity(self) -> int:
         return self._purchased_quantity - self.allocated_quantity
@@ -50,10 +86,19 @@ if __name__ == '__main__':
         )
 
 
-    def chapter1_test_1():
+    def test_allocation_is_idempotent():
+        batch, line = make_batch_and_line_fixture("ANGULAR-DESK", 20, 2)
+        batch.allocate(line)
+        batch.allocate(line)
+        assert batch.available_quantity == 18
+
+
+    def chapter1_test_1_3():
         large_batch, small_line = make_batch_and_line_fixture("ELEGANT-LAMP", 20, 2)
         print(large_batch.can_allocate(small_line))
         print(large_batch.can_allocate(small_line))
+        test_allocation_is_idempotent()
 
 
-    chapter1_test_1()
+    # chapter1_test_1_3()
+    pass
