@@ -30,31 +30,33 @@ def allocate(line: OrderLine, batches: List[Batch]) -> str:
 
 class Batch:
     def __init__(self, ref: str, sku: str, qty: int, eta: Optional[date]):
-        self.reference = ref
-        self.sku = sku
-        self.eta = eta
-        self._purchased_quantity = qty
+        self.reference = ref  # 주문 참조 번호 Order Reference
+        self.sku = sku  # 제품 Product
+        self.eta = eta  # 배송 여부
+        self._purchased_quantity = qty  # 구매 수량
         # Set을 사용하여 집합 안에 있는 원소는 모두 유일하다.
         self._allocations: Set[OrderLine] = set()  # _allocations 변수는 OrderLine 데이터 클래스를 참조한다.
 
     # Equal Magic Method
+    # ( == ) 연산자에 대한 동작을 정의한다.
     def __eq__(self, other):
         if not isinstance(other, Batch):
             return False
         return other.reference == self.reference
 
-    # doc : https://oreil.ly/YUzg5
-    # 객체를 집합에 추가하거나 Dictionary의 Key로 사용할 때 동작을 제어하기 위한 Magic Method
-    def __hash__(self):
-        return hash(self.reference)
-
     # sorted()를 작동하게 하기 위한 Magic Method
+    # ( > ) 연산자에 대한 동작을 정의한다.
     def __gt__(self, other):
         if self.eta is None:
             return False
         if other.eta is None:
             return True
         return self.eta > other.eta
+
+    # doc : https://oreil.ly/YUzg5
+    # 객체를 집합에 추가하거나 Dictionary의 Key로 사용할 때 동작을 제어하기 위한 Magic Method
+    def __hash__(self):
+        return hash(self.reference)
 
     def allocate(self, line: OrderLine):
         if self.can_allocate(line):
