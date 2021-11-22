@@ -40,7 +40,7 @@ def test_can_subtract_money_values():
 
 # NamedTuple을 더하는 경우
 def test_adding_different_currencies_fails():
-    Money("usd", 10) + Money("hbp", 10)
+    assert Money("usd", 10) + Money("hbp", 10)
 
 
 # Class의 currency도 Multiple 되므로 에러 발생

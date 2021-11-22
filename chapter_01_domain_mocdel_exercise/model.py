@@ -55,6 +55,7 @@ class Batch:
 
     # doc : https://oreil.ly/YUzg5
     # 객체를 집합에 추가하거나 Dictionary의 Key로 사용할 때 동작을 제어하기 위한 Magic Method
+    # VO와 Entity를 테스트 하기위해 사용 / ㄷ
     def __hash__(self):
         return hash(self.reference)
 
@@ -66,12 +67,13 @@ class Batch:
         if line in self._allocations:
             self._allocations.remove(line)
 
-    @property
+    # Protected로 설정된 인자를 Getter로만 조회할 수 있도록 구현하기위해 사용
+    @property  # Getter
     def allocated_quantity(self) -> int:
         return sum(line.qty for line in self._allocations)
 
     # Batch._purchased_quantity - Set에 저장된 모든 OrderLine.qty 값을 뺀 결과값
-    @property
+    @property  # Getter
     def available_quantity(self) -> int:
         return self._purchased_quantity - self.allocated_quantity
 
