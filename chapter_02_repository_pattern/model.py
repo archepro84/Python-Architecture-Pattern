@@ -24,6 +24,15 @@ class OrderLine:
     qty: int
 
 
+"""
+    assert retrieved.sku == expected.sku
+    assert retrieved._purchased_quantity == expected._purchased_quantity
+    assert retrieved._allocations == {
+        model.OrderLine("order1", "GENERIC-SOFA", 12),
+    }
+"""
+
+
 class Batch:
     def __init__(self, ref: str, sku: str, qty: int, eta: Optional[date]):
         self.reference = ref
