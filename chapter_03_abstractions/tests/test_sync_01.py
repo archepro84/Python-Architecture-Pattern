@@ -45,20 +45,22 @@ def test_when_a_file_has_been_renamed_in_the_source():
 
         sync(source, dest)
 
-        assert old_dest_path.exists() is False
-        assert expected_dest_path.read_text() == content
+        assert old_dest_path.exists() is False  # 사본파일이 삭제된 것을 테스트
+        assert expected_dest_path.read_text() == content  # 처음입력한 content와 File.write Text가 같은지 테스트
 
     finally:
         shutil.rmtree(source)
         shutil.rmtree(dest)
 
 
+# 테스트를 위한 단순화한 입력과 출력
 def test_when_a_file_exists_in_the_source_but_not_the_destination():
     src_hashes = {'hash1': 'fn1'}
     dst_hashes = {}
     expected_actions = [('COPY', '/src/fn1', '/dst/fn1')]
 
 
+# 테스트를 위한 단순화한 입력과 출력
 def test_when_a_file_has_been_renamed_in_the_source():
     src_hashes = {'hash1': 'fn1'}
     dst_hashes = {'hash1': 'fn2'}
