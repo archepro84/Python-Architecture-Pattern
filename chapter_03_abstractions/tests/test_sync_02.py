@@ -4,7 +4,7 @@ import tempfile  # 임시 파일과 임시 디렉터리를 생성하는 Lib
 import shutil  # 고수준 파일 연산용 Lib
 # doc : https://docs.python.org/ko/3/library/pathlib.html
 from pathlib import Path  # 객체 지향 파일 시스템 경로 Lib
-from sync import sync, determine_actions
+from sync_02 import sync, determine_actions
 
 
 # 엔드 투 엔드 테스트
