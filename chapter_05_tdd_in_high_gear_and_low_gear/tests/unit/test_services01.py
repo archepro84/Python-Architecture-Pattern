@@ -3,6 +3,7 @@ from datetime import date, timedelta
 from adapters import repository
 from domain.model import Batch, OrderLine
 from service_layer import services
+from service_layer.services import allocate
 
 today = date.today()
 tomorrow = today + timedelta(days=1)
@@ -31,6 +32,7 @@ class FakeSession:
         self.committed = True
 
 
+# TODO : 개선된 allocate에서는 에러가 발생한다.
 # 서비스 계층에서 도메인 테스트 재작성
 # Domain layer 테스트
 def test_prefers_current_stock_batches_to_shipments():
@@ -44,6 +46,7 @@ def test_prefers_current_stock_batches_to_shipments():
     assert shipment_batch.available_quantity == 1
 
 
+# TODO : 개선된 allocate에서는 에러가 발생한다.
 # Service layer 테스트
 def test_prefers_warehouse_batches_to_shipments():
     in_stock_batch = Batch("in-stock-batch", "RETRO-CLOCK", 100, eta=None)
