@@ -7,6 +7,14 @@ from domain.model import OrderLine
 from adapters.repository import AbstractRepository
 
 
+class InvalidSku(Exception):
+    pass
+
+
+def is_valid_sku(sku, batches):
+    return sku in {b.sku for b in batches}
+
+
 # 단순히 테스트에서 의존성을 제거할 수 있다는 이유만으로 새로운 서비스를 작성해야 할까?
 def add_batch(
     ref: str,

@@ -35,16 +35,6 @@ def test_add_batch():
     assert session.committed
 
 
-# 테스트가 함수를 호출하면서 원시 타입 사용
-def test_returns_allocation():
-    # 직접 Batch 객체를 인스턴스화 하므로 여전히 도메인에 의존하고 있다.
-    batch = model.Batch("batch1", "COMPLICATED-LAMP", 100, eta=None)
-    repo = FakeRepository([batch])
-
-    result = services.allocate("o1", "COMPLICATED-LAMP", 10, repo, FakeSession())
-    assert result == "batch1"
-
-
 # 도메인 모델에 의존성을 제거한 Service layer 테스트
 def test_allocate_returns_allocation():
     repo, session = FakeRepository([]), FakeSession()
